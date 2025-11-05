@@ -5,7 +5,7 @@ export default function App() {
   const [forecasts, setForecasts] = useState([]);
 
   useEffect(() => {
-    fetch("https://localhost:7084/WeatherForecast") // replace with your backend endpoint
+    fetch("http://localhost:5238/WeatherForecast") // replace with your backend endpoint
       .then(res => res.json())
       .then(data => setForecasts(data))
       .catch(err => console.error("Failed to fetch forecast:", err));
