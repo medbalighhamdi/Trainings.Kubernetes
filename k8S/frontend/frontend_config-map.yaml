@@ -5,6 +5,6 @@ metadata:
   labels:
     app: frontend-configmap
 data:
-  my-properties-file.yaml: |
+  appSettings.yaml: |
     # yaml file
     backend_url: http://api.weatherly
