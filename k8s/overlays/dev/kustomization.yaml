@@ -5,9 +5,9 @@ metadata:
   name: dev-kustomization
 
 resources:
-  - ../../../backend
-  - ../../../frontend
-  - ../../../shared
+  - ../../manifests/backend
+  - ../../manifests/frontend
+  - ../../manifests/shared
 
 namePrefix: dev-
 nameSuffix: ""

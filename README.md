@@ -37,6 +37,7 @@ Application source code:
     - Azure CLI installed and configured
     - kubectl configured for AKS access
     - Docker installed for container builds
+    - Terraform command line tool installed
     - dotnet 8 or above
 
 2. **Infrastructure Setup**
@@ -52,7 +53,10 @@ Application source code:
     cd k8s/
     kubectl apply -f .
     ```
-4. **Azure Container Registry X Kubernetes attachment**
+
+4. **Cluster configuration**
+
+**Azure Container Registry attachment**
 
 Since this repo is only for demo purposes, and due to azure budget optimization, we have not configured private endpoint access from AKS cluster to the Azure Container Registry, which require Premium tier for private endpoints integration.
 For the AKS cluster to access the docker image, we have allowed public access to the ACR registry (again, this is not the recommanded best practise), which direct ACR attachment to the AKS cluster using the az aks --attach-acr command option.
@@ -63,7 +67,12 @@ Following is a sample command:
 
 This configuration, coupled with the terraform's role based access (AcrPull access) will allow the worker nodes to pull the images that are pushed into the ACR container registry.
 
-4. **Continous Integration / Continous Delivery**
+**Custom CRDs installation**
+
+Kustomizations are used in order to create environment specific resources
+
+
+5. **Continous Integration / Continous Delivery**
 
 I didn't include a CI/CD pipeline for the moment (Since I needed to explore kubernetes as part of this repo rather than github actions).
 
