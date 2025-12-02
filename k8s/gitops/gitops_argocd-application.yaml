@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/medbalighhamdi/Trainings.Kubernetes.git
-    targetRevision: HEAD
+    targetRevision: main
     path: k8s/overlays/dev
     directory:
       recurse: true
