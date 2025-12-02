@@ -39,6 +39,7 @@ Application source code:
     - Docker installed for container builds
     - Terraform command line tool installed
     - dotnet 8 or above
+    - Helm command (using Winget utility for windows)
 
 2. **Infrastructure Setup**
 
@@ -67,9 +68,10 @@ Following is a sample command:
 
 This configuration, coupled with the terraform's role based access (AcrPull access) will allow the worker nodes to pull the images that are pushed into the ACR container registry.
 
-**Custom CRDs installation**
+**Argo CD installation**
 
-Kustomizations are used in order to create environment specific resources
+- Please install argocd using helm command line (```helm repo add argocd <argocd-url>``` followed by ```helm update repo argocd```).
+- Once installed, a service called argocd-server will run under argocd namespace. Please run the application manifest under gitops folder.
 
 
 5. **Continous Integration / Continous Delivery**
