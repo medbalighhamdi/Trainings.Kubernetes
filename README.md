@@ -68,11 +68,15 @@ Following is a sample command:
 
 This configuration, coupled with the terraform's role based access (AcrPull access) will allow the worker nodes to pull the images that are pushed into the ACR container registry.
 
-**Argo CD installation**
+**Argo CD installation and usage**
 
 - Please install argocd using helm command line (```helm repo add argocd <argocd-url>``` followed by ```helm update repo argocd```).
 - Once installed, a service called argocd-server will run under argocd namespace. Please run the application manifest under gitops folder.
 
+Once installed, you can apply the application file located under gitops folder (named gitops_argocd-application.yaml).
+This will ensure your application will appear in your argocd-server.
+
+In order for the kustomization logic to execute correctly on argocd server level, you can appply the kustomizations executing ```kubectl apply -k .``` command under the overloay/dev folder. The command will read the kustomization.yaml file under this folder then apply the otehr kustomizations in cascade for the referenced resource folders.
 
 5. **Continous Integration / Continous Delivery**
 
