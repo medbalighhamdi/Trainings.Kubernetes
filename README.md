@@ -39,6 +39,7 @@ Application source code:
     - Docker installed for container builds
     - Terraform command line tool installed
     - dotnet 8 or above
+    - npm 10.9.3 or above
     - Helm command (using Winget utility for windows)
 
 2. **Infrastructure Setup**
@@ -89,6 +90,10 @@ You will to use two commands:
 
 - Place you command line prompt under the DockerFile folder location and run ```docker build -t <registry-url>/<image-name>:vx.x .``` in order to create an image taged with version x.x.
 - When you package is ready to deploy, push it in the created registry as part of terraform using ```docker push <registry-url>/<image-name>:vx.x```.
+
+## Running solution locally
+
+- Place command line under backend API src folder then run ```dotnet run```. Once backend is ran, in another command line, run ```npm run dev``` which will automatically point to the local backend's address. Please verify correct backend url in frontend's yaml configuration file.
 
 ## Contributing
 
