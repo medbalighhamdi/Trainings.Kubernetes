@@ -25,7 +25,7 @@ public class WeatherForecastController : ControllerBase
     public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
     {
         var allForecasts = await _weatherForecastService.GetAll(cancellationToken);
-        if(allForecasts.Any())
+        if(!allForecasts.Any())
             return NoContent();
         return Ok(allForecasts.Select(f => f.MapToGetDto()));
     }

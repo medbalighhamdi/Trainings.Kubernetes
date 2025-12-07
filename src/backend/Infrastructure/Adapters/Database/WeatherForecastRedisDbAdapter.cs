@@ -1,4 +1,4 @@
-using StackExchange.Redis;
+using DomaiNWeatherForecast = WeatherForecast.Domain.AggregateModel.WeatherAggregate.WeatherForecast;
 using WeatherForecast.Api.Domain.Ports;
 using WeatherForecast.Domain.Ports.Adapters.Database;
 using WeatherForecast.Infrastructure.Adapters.Database.Extensions;
@@ -23,7 +23,7 @@ public class WeatherForecastRedisDbAdapter : IWeatherForecastDbAdapter
     #region implementations
 
     /// </<inheritdoc/>
-    public async Task AddOrUpdate(Domain.AggregateModel.WeatherAggregate.WeatherForecast weatherForecast, CancellationToken cancellationToken)
+    public async Task AddOrUpdate(DomaiNWeatherForecast weatherForecast, CancellationToken cancellationToken)
         => await _redisConnector.WriteDb.StringSetAsync(
                 RedisKeyUtils.CreateWeatherForecastKey(weatherForecast.City),
                 weatherForecast.ToJson()
@@ -36,29 +36,34 @@ public class WeatherForecastRedisDbAdapter : IWeatherForecastDbAdapter
     /// Similar to a select * from a relational database. Please use carefully.
     /// </summary>
     /// <returns>All stored redis key values</returns>
-    public async Task<IEnumerable<Domain.AggregateModel.WeatherAggregate.WeatherForecast>> GetAll(CancellationToken cancellationToken)
+    public async Task<IEnumerable<DomaiNWeatherForecast>> GetAll(CancellationToken cancellationToken)
     {
-        var redisKeys = _redisConnector.ReadServer.Keys(pattern: "*");
+        var redisKeys = _redisConnector.ReadServer.Keys(pattern: "*")
+                // very important to materialize the lazy keys using ToList() or ToArray()
+                // this will prevent mulitple scans and cursor resets when matrialization is performed later in code
+                .ToList();
 
         // use stack exchange batch method for extreme optimization
         var batch = _redisConnector.ReadDb.CreateBatch();
 
-        IEnumerable<DbWeatherForecastKeyValue> byKeyTasks = new List<DbWeatherForecastKeyValue>();
+        var byKeyTasks = redisKeys.Select(key =>
+        {
+            var task = batch.StringGetAsync(key); // call GetAsync from the instanciated batch above
+            return new DbWeatherForecastKeyValue(key.ToString(), task);
+        }).ToList();
 
-        byKeyTasks = redisKeys.Select(key
-            => new DbWeatherForecastKeyValue(key.ToString(), _redisConnector.ReadDb.StringGetAsync(key.ToString())));
-
+        // execute operations that are configured on the batch processor
         batch.Execute();
 
-        var redisValues = await Task.WhenAll(byKeyTasks.Select(t => t.Value));
+        var redisValues = await Task.WhenAll(byKeyTasks.Select(t => t.Value)).WaitAsync(cancellationToken);
 
-        return byKeyTasks.Select(kv =>
-            kv.Value.Result.
-            // maps the redis value to a db object
-            ToDbObject().
-            // and then maps the db object to a domain object
-            // and passing the city (which is the redis key) as parameter
-            ToDomainObject(RedisKeyUtils.ResolveWeatherForecastCity(kv.Key)))
+        return byKeyTasks
+            .Select(kv => kv.Value.Result
+                // maps the redis value to a db object
+                .ToDbObject()
+                // and then maps the db object to a domain object
+                // and passing the city (which is the redis key) as parameter
+                .ToDomainObject(RedisKeyUtils.ResolveWeatherForecastCity(kv.Key)))
             .ToList();
     }
 
