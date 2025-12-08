@@ -1,35 +1,41 @@
 services:
   redis:
-    image: redis:7
+    image: redis:latest
     container_name: redis
     ports:
       - "6379:6379"
     volumes:
-      - ./data/redis-dump.rdb:/data/dump.rdb
-  backend:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  weather-forecast-api:
     build:
-      context: ./backend
+      context: ./weather-forecast-api
       dockerfile: DockerFile
-    container_name: backend
+    container_name: weather-forecast-api
     depends_on:
       - redis
     environment:
-      WEATHERFORECAST__REDIS__READDBCONNECTION: "redis:6379,abortConnect=false,connectRetry=10"
-      WEATHERFORECAST__REDIS__WRITEDBCONNECTION: "redis:6379,abortConnect=false,connectRetry=10"
+      WeatherForecast__Redis__ReadDbConnection: "redis:6379,abortConnect=false,connectRetry=10"
+      WeatherForecast__Redis__WriteDbConnection: "redis:6379,abortConnect=false,connectRetry=10"
       ASPNETCORE_ENVIRONMENT: "Development"
     ports:
       - "5000:80"
     restart: always
-  frontend:
+    command: ["/app/wait-for.sh", "redis", "6379", "dotnet", "WeatherForecast.Api.dll"]
+  weather-forecast-frontend:
     build:
-      context: ./frontend
+      context: ./weather-forecast-frontend
       dockerfile: DockerFile
     depends_on:
-      - backend
+      - weather-forecast-api
     environment:
       # Point frontend to backend container
-      BACKEND_URL: "http://backend:5000"
-    container_name: frontend
+      BACKEND_URL: "http://weather-forecast-api:5000"
+    container_name: weather-forecast-frontend
     ports:
       - "8080:80"
     restart: always
