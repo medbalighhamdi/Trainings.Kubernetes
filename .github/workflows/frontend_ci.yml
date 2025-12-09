@@ -15,7 +15,7 @@ on:
 
 jobs:
     frontend-dockerBuildAndPush:
-        uses: ./.github/workflows/docker-ci.template.yml
+        uses: ./.github/workflows/ci-template.yml
         with:
             service_name: weather-forecast-frontend
             service_path: src/weather-forecast-frontend

@@ -11,6 +11,14 @@ on:
             gitversion_config_path:
                 required: true
                 type: string
+        secrets:
+          ACR_LOGIN_SERVER:
+            required: true
+          ACR_USERNAME:
+            required: true
+          ACR_PASSWORD:
+            required: true
+
 
 jobs:
     versionning:
