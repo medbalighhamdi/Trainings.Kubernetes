@@ -18,3 +18,7 @@ jobs:
             service_path: src/weather-forecast-frontend
             gitversion_config_path: src/weather-forecast-frontend/GitVersion.yml
             push_to_registry: false
+        secrets:
+            ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+            ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+            ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
