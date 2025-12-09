@@ -40,7 +40,7 @@ jobs:
               console.log("No Weather Forecast changes detected — skipping assignment.");
             }
             else {
-                teams.push("@BalighOrganization/wf-team");
+                teams.push("@WellArchitectedLabs/wf-dev-team");
             }
 
             // --------------------------------------
@@ -57,7 +57,7 @@ jobs:
               console.log("No Weather Forecast changes detected — skipping assignment.");
             }
             else {
-                teams.push("@BalighOrganization/wf-devops");
+                teams.push("@WellArchitectedLabs/devops-team");
             }
 
             // ---------------------------
