@@ -1,0 +1,69 @@
+name: Auto Assign WF Team on Weather Forecast Changes
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign wf-team when weather forecast code changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = await github.paginate(
+              github.rest.pulls.listFiles, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100
+              }
+            );
+
+            const teams = []
+
+            // ------------------------------
+            // ✅ I - Wf-team auto-assignment
+            // ------------------------------
+
+
+            const wfTouched = files.some(file =>
+              file.filename.startsWith("src/weather-forecast-api/") ||
+              file.filename.startsWith("src/weather-forecast-frontend/")
+            );
+
+            if (!wfTouched) {
+              console.log("No Weather Forecast changes detected — skipping assignment.");
+            }
+            else {
+                teams.push("wf-team");
+            }
+
+            // --------------------------------------
+            // ✅ II - Wf-devops team auto-assignment
+            // --------------------------------------
+
+            const devOpsTouched = files.some(file =>
+              file.filename.startsWith("k8s") ||
+              file.filename.startsWith("iac")
+            );
+
+            if (!devOpsTouched) {
+              console.log("No Weather Forecast changes detected — skipping assignment.");
+            }
+            else {
+                teams.push("wf-devops");
+            }
+
+            // ---------------------------
+            // Committing all reviewers
+            // ---------------------------
+
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              team_reviewers: teams
+            });
+            console.log("✅ wf-team assigned successfully.");
