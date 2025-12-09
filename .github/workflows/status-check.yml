@@ -6,8 +6,6 @@ on:
           - main
           - develop
           - release/**
-        paths:
-          - src/weather-forecast-frontend/**
 
 jobs:
     check-build:
