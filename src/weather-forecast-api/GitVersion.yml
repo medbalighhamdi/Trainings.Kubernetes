@@ -1,17 +1,29 @@
 mode: ContinuousDelivery
+major-version: 1
 
 branches:
   main:
     regex: ^main$
-    increment: Patch
+    increment: None
+    track-merge-target: false
+    prevent-increment-of-merged-branch-version: true
+
   develop:
     regex: ^develop$
     increment: Minor
+    track-merge-target: false
+    prevent-increment-of-merged-branch-version: true
+
   feature:
     regex: ^feature[/-]
-    increment: Inherit
+    increment: Inherit  # inherit from develop
 
-ignore:
-  sha: []
+  release:
+    regex: ^release[/-]
+    increment: Patch
+    track-merge-target: false
+    prevent-increment-of-merged-branch-version: true
 
-major-version: 1
+  hotfix:
+    regex: ^hotfix[/-]
+    increment: Inherit  # inherit from release
