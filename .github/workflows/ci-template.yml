@@ -36,19 +36,18 @@ jobs:
             ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
           run: |
             #!/bin/bash
-              set -e  # stop on first failure
+            set -e  # stop on first failure
 
-              # List of secrets to check
-              secrets=("ACR_LOGIN_SERVER" "ACR_USERNAME" "ACR_PASSWORD")
+            # List of secrets to check
+            secrets=("ACR_LOGIN_SERVER" "ACR_USERNAME" "ACR_PASSWORD")
 
-              # Loop and validate each secret
-              for secret_name in "${secrets[@]}"; do
-                value="${!secret_name}"
-                if [[ -z "$(echo "$value" | tr -d '[:space:]')" ]]; then
+            # Loop and validate each secret
+            for secret_name in "${secrets[@]}"; do
+              value="${!secret_name}"
+              if [[ -z "$(echo "$value" | tr -d '[:space:]')" ]]; then
                 echo "Error: Secret '$secret_name' is empty or whitespace!"
-                exit 1
-                fi
-              done
+              exit 1
+              fi
             done
             echo "All required ACR secrets are set."
       
