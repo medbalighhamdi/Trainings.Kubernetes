@@ -70,4 +70,5 @@ jobs:
               pull_number: context.payload.pull_request.number,
               team_reviewers: teams
             });
+            
             console.log("✅ Team assignment completed successfully.");
