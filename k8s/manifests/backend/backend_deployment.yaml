@@ -47,7 +47,7 @@ spec:
       # can be multiple containers since one pod scan contain multiple containers
       - name: backend-webapp
         # test image from docker registry, provided by nginx project
-        image: acrdevzlj7yj.azurecr.io/weatherforecast-backend:latest
+        image: acrdevzlj7yj.azurecr.io/weather-forecast-api:latest
         ports: 
         - containerPort: 80
         imagePullPolicy: Always  # Always pull latest
