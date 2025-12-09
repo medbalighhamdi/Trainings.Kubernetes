@@ -71,6 +71,6 @@ jobs:
             - name: Build & Push image
               run: |
                 VERSION_TAG="${{ needs.versionning.outputs.version }}-${{ needs.versionning.outputs.sha }}"
-                IMAGE="${{ secrets.ACR_LOGIN_SERVER}}/${{ inputs.service_name }}:$VERSION_TAG}"
+                IMAGE="${{ secrets.ACR_LOGIN_SERVER }}/${{ inputs.service_name }}:$VERSION_TAG"
                 docker build -t $IMAGE ${{ inputs.service_path }}
                 docker push $IMAGE
