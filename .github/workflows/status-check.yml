@@ -1,0 +1,20 @@
+name: Pull Request status check
+
+on:
+    pull_request:
+        branches:
+          - main
+          - develop
+          - release/**
+        paths:
+          - src/weather-forecast-frontend/**
+
+jobs:
+    check-build:
+        name: check docker build
+        uses: ./.github/workflows/ci-template.yml
+        with:
+            service_name: weather-forecast-frontend
+            service_path: src/weather-forecast-frontend
+            gitversion_config_path: src/weather-forecast-frontend/GitVersion.yml
+            push_to_registry: false
