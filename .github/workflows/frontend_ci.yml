@@ -9,8 +9,8 @@ on:
           - "src/weather-forecast-frontend/**"
 
 jobs:
-    call-template:
-        uses: ./.github/workflows/docker.ci.template.yml
+    frontend-dockerBuildAndPush:
+        uses: ./.github/workflows/docker-ci.template.yml
         with:
             service_name: weather-forecast-frontend
             service_path: src/weather-forecast-frontend

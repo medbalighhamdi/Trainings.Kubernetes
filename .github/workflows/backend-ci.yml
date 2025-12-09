@@ -10,7 +10,7 @@ on:
           - "src/weather-forecast-api/**"
 
 jobs:
-  call-template:
+  backend-dockerBuildAndPush:
     uses: ./.github/workflows/docker-ci.template.yml
     with:
       service_name: weather-forecast-api
