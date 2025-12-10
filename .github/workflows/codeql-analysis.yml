@@ -6,13 +6,13 @@ on:
           - main
           - develop
         paths:
-          - .src/weatehr-forecast-api/**
+          - src/weather-forecast-api/**
     pull_request:
         branches:
           - main
           - develop
         paths:
-          - .src/weatehr-forecast-api/**
+          - src/weather-forecast-api/**
 
 jobs:
     codeQLAnalysis-backend:
