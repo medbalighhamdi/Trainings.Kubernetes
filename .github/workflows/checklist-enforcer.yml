@@ -1,4 +1,4 @@
-name: Checklist Enforcer
+name: Status Check - Checklist Enforcer
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Auto Assign Teams
+name: Status Check - Auto Assign Teams
 
 on:
   pull_request:

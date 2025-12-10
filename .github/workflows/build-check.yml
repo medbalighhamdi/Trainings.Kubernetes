@@ -1,4 +1,4 @@
-name: Pull Request status check
+name: Status Check - Pull Request Build check
 
 on:
     pull_request:

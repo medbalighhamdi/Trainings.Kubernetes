@@ -1,4 +1,4 @@
-name: (Template) Docker buld and push
+name: Template - Docker buld and push
 on:
     workflow_call:
         inputs:

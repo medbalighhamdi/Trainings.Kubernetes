@@ -1,4 +1,4 @@
-name: Build & Push Weather Forecast Frontend
+name: CI - Build & Push Weather Forecast Frontend
 
 on:
     push:
