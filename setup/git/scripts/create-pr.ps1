@@ -1,5 +1,5 @@
 param (
-    [string]$TargetBranch = "main"
+    [string]$TargetBranch = "develop"
 )
 
 # -----------------------------
