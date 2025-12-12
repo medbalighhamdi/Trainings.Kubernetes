@@ -35,7 +35,7 @@ Key intentions:
 
 # Technical architecture
 
-- The following diagram models the intended technical architecture.
+The following diagram models the intended technical architecture.
 - All workloads are hosted in Azure Kubernetes Services.
 - Manifests are added in k8s folder in this same repo and are watched by ArgoCd for instant sync.
 - AKS exposes the workloads using a frontend and a backend Gateway API + Http Routes.
@@ -43,58 +43,86 @@ Key intentions:
 
 ```mermaid
 %% AKS / k8s resource relationship diagram
-%% Paste this block in a GitHub Markdown file — GitHub supports Mermaid.
 flowchart TB
-    %% Style Definitions (darker, high contrast)
+
+    %% =========================
+    %% Style Definitions
+    %% =========================
     classDef infra fill:#2a4b8d,stroke:#1e325c,color:#ffffff;
     classDef acr fill:#1b5e20,stroke:#0d3b12,color:#ffffff;
     classDef ci fill:#4e342e,stroke:#3e2723,color:#ffffff;
     classDef gitops fill:#004d40,stroke:#00332b,color:#ffffff;
     classDef app fill:#6a1b9a,stroke:#4a136c,color:#ffffff;
     classDef net fill:#b71c1c,stroke:#7f1313,color:#ffffff;
+    classDef policy fill:#37474f,stroke:#000000,color:#ffffff;
     classDef external fill:#263238,stroke:#000000,color:#ffffff;
 
-    %% CI Pipeline
-    CI["CI Pipeline: Build, Test, Versioning"]:::ci
-    Image["Container Image: Versionned using GitVersion & pushed"]:::acr
-    CI -->|Builds + Versions Image| Image
+    %% =========================
+    %% External Access
+    %% =========================
+    Internet(("Internet")):::external
 
+    %% =========================
+    %% CI Pipeline
+    %% =========================
+    CI["CI Pipeline\nBuild Test Version"]:::ci
+    Image["Versioned Container Image"]:::acr
+    CI -->|Build and Push| Image
+
+    %% =========================
     %% Container Registry
-    ACR["Azure Container Registry (ACR)"]:::acr
+    %% =========================
+    ACR["Azure Container Registry"]:::acr
     Image --> ACR
 
-    %% GitOps / ArgoCD
-    GitRepo["k8s folder under repository root"]:::gitops
-    Argo["ArgoCD: GitOps Controller"]:::gitops
-    GitRepo -->|Watches Git| Argo
-    Argo -->|Syncs manifests into Cluster| AKS
+    %% =========================
+    %% GitOps
+    %% =========================
+    GitRepo["Git Repo\nk8s Manifests"]:::gitops
+    Argo["ArgoCD"]:::gitops
+    Argo -->|Detect Changes| GitRepo
 
+    %% =========================
     %% AKS Cluster
+    %% =========================
     AKS["AKS Cluster"]:::infra
+    Argo -->|Sync Desired State| AKS
 
     subgraph Workloads["Workloads in AKS"]
-        Deploy1["Deployments"]:::app
-        Pods["Pods"]:::app
-        SVC["Services"]:::app
+        direction TB
+
+        %% Traffic entry
+        Gateway["Gateway API"]:::net
         HTTPRoute["HTTPRoute"]:::net
-        Gateway["Gateway API (Http Listeners)"]:::net
+        SVC["Service"]:::app
+
+        %% Compute
+        Deploy1["Deployment"]:::app
+        Pods["Pods"]:::app
+
+        %% Policies
+        HPA["HPA"]:::policy
+        PDB["PDB"]:::policy
+
+        %% Traffic flow
+        Gateway --> HTTPRoute
+        HTTPRoute --> SVC
+        SVC --> Pods
+
+        %% Pod lifecycle
+        Deploy1 -->|Create| Pods
+
+        %% Control plane
+        HPA -->|Scale Replicas| Deploy1
+        PDB -->|Guarantee Availability| Pods
     end
 
-    AKS --> Deploy1
-    Deploy1 -->|Creates| Pods
-    SVC --> Pods
-    HTTPRoute --> SVC
-    Gateway --> HTTPRoute
-
-    %% Image flow
-    ACR -->|Pulls Images| Deploy1
-
-    %% ArgoCD applies YAMLs
-    Argo -->|Applies YAMLs for deployments, services, httpRoutes, gateway, ingress| Workloads
-
-    %% Internet access
-    Internet(("Internet")):::external
-    Internet -->|HTTP/HTTPS traffic| Gateway
+    %% =========================
+    %% Cross-boundary relations
+    %% =========================
+    Internet -->|HTTP HTTPS| Gateway
+    ACR -->|Pull Image| Deploy1
+    Argo -->|Reads Application Manifests & overlays| Workloads
 ```
 
 # Repository layout
