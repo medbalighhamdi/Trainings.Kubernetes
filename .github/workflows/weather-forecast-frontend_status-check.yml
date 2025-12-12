@@ -12,7 +12,7 @@ on:
 
 jobs:
   frontend-buildCheck:
-    name: PR Build Check
+    name: Frontend Status Check - Try package docker image
     uses: ./.github/workflows/template_ci.yml
     with:
       service_name: weather-forecast-frontend
