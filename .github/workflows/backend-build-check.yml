@@ -67,7 +67,7 @@ jobs:
         - name: Upload coverage to Codecov
           uses: codecov/codecov-action@v5
           with:
-            directory: src/weather-forecast-api/Tests/TestResults/Coverage
+            directory: src/weather-forecast-api/Tests/TestResults
             fail_ci_if_error: true
             files: coverage.cobertura.xml
             flags: backend
