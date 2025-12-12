@@ -1,104 +1,153 @@
-# Trainings.Kubernetes
+# WellArchitectedLab.MonoRepo
 
-A comprehensive training repository demonstrating front-to-back application deployment on Azure Kubernetes Service (AKS) infrastructure.
+> **TLDR**
+>
+> This mono-repo is a full, working microservices cloud platform reference: it includes application source code, Infrastructure-as-Code to provision cloud resources (AKS, ACR, networking, RBAC), Kubernetes manifests and overlays, local development scaffolding, plus CI/CD pipelines and developer tooling. The goal is to show a realistic end-to-end developer + DevOps experience: from local dev to CI, tests, container images, cluster deployment and GitOps-based delivery (Argo CD).
 
-## Overview
+---
 
-This repository provides practical examples and hands-on training for deploying applications to AKS, covering infrastructure provisioning, application development, and Kubernetes orchestration.
+## Table of contents
 
-## Repository Structure
+- Introduction
+- Repository layout (one major section per root folder)
+  - `.github/` (workflows & PR templates)
+  - `iac/` (Infrastructure as Code)
+  - `k8s/` (Kubernetes manifests & AKS setup)
+  - `src/` (application source, tests, docker-compose)
+  - `setup/` (aliases & helper scripts)
+- Running the solution locally
+- Developer & DevOps notes
+- Contributing
+- License
 
-### 📁 k8s/
-Contains Kubernetes manifests and deployment configurations:
-- Deployment configurations
-- Service definitions
-- ConfigMaps and Secrets
-- Ingress controllers / gateway apis
-- Http routes
-- Monitoring and logging setup
+---
 
-### 📁 iac/
-Infrastructure as Code (IaC) templates:
-- Terraform/ARM templates for AKS cluster provisioning
-- Network configuration
-- Security policies and RBAC
-- Azure resource definitions
+# Introduction
 
-### 📁 src/
-Application source code:
-- Frontend applications
-- Backend services
-- API implementations
-- Configuration files
+This mono-repo demonstrates a production-minded, full-stack microservices reference platform. It was assembled to teach and prove the complete delivery lifecycle: local development, automated testing, containerization, infrastructure provisioning (IaC), Kubernetes cluster management (AKS), CI using GitHub Actions, and continuous delivery using GitOps (Argo CD). The repo is intentionally opinionated: it shows how the pieces connect so you can reuse patterns directly in real projects or list it as a demonstrated project on your CV.
 
-## Getting Started
+Key intentions:
+- Keep a single repository containing all artifacts needed to build, test, package and deploy the example microservices.
+- Provide IaC templates so the platform can be provisioned in Azure (AKS, ACR, networking, RGs, etc.).
+- Illustrate GitHub Actions-based CI and GitOps with Argo CD for delivery.
+- Make it easy for a developer to run everything locally using the provided `docker-compose` (under `src/`).
 
-1. **Prerequisites**
-    - Azure CLI installed and configured
-    - kubectl configured for AKS access
-    - Docker installed for container builds
-    - Terraform command line tool installed
-    - dotnet 8 or above
-    - npm 10.9.3 or above
-    - Helm command (using Winget utility for windows)
+---
 
-2. **Infrastructure Setup**
+# Repository layout
 
-    ```bash
-    cd iac/
-    # Follow infrastructure deployment instructions
-    ```
+## `.github/`
 
-3. **Application Deployment**
+Contains repository-level GitHub configuration. Two important sub-areas to call out:
 
-    ```bash
-    cd k8s/
-    kubectl apply -f .
-    ```
+### `.github/workflows/`
 
-4. **Cluster configuration**
+All GitHub Actions workflows live here. They automate builds, tests, releases and other repo-level automation. See the folder for the exact YAML workflows. Examples of responsibilities these workflows typically cover:
 
-**Azure Container Registry attachment**
+- **Build & Test**: compile projects, run unit tests and publish test results.
+- **Static Analysis**: run static checks for code quality using CodeCov.
+- **Publish Artifacts**: build container images and push to the configured container registry (ACR) or publish packages.
+- **Release & Tagging**: create Git tags/releases and optionally trigger GitOps pipelines.
+- **CI Helpers**: maintenance tasks such as branch housekeeping or dependency updates.
 
-Since this repo is only for demo purposes, and due to azure budget optimization, we have not configured private endpoint access from AKS cluster to the Azure Container Registry, which require Premium tier for private endpoints integration.
-For the AKS cluster to access the docker image, we have allowed public access to the ACR registry (again, this is not the recommanded best practise), which direct ACR attachment to the AKS cluster using the az aks --attach-acr command option.
-Following is a sample command:
-    ```
-    az aks update -n aks-dev-001 -g rg-kubernetes-dev-001 --attach-acr <acr-name-or-resource-id>
-    ```
+(You can review the actual workflow files here.)
 
-This configuration, coupled with the terraform's role based access (AcrPull access) will allow the worker nodes to pull the images that are pushed into the ACR container registry.
+> Workflow folder: `/.github/workflows/` — **see**: https://github.com/WellArchitectedLabs/WellArchitectedLab.MonoRepo/tree/develop/.github/workflows. 
 
-**Argo CD installation and usage**
+### `.github/PULL_REQUEST_TEMPLATE/`
 
-- Please install argocd using helm command line (```helm repo add argocd <argocd-url>``` followed by ```helm update repo argocd```).
-- Once installed, a service called argocd-server will run under argocd namespace. Please run the application manifest under gitops folder.
+Contains PR templates used to standardize contribution details, checklist and required information for reviewers. This helps maintain quality and ensures important information (testing, migration steps, security considerations) is included in each PR.
+The Pull Request Templates are used by git pr alias that you can install via installation script placed under `scripts/git` folder — **see**: https://github.com/WellArchitectedLabs/WellArchitectedLab.MonoRepo/tree/develop/scripts/git/aliases. 
 
-Once installed, you can apply the application file located under gitops folder (named gitops_argocd-application.yaml).
-This will ensure your application will appear in your argocd-server.
+---
 
-In order for the kustomization logic to execute correctly on argocd server level, you can appply the kustomizations executing ```kubectl apply -k .``` command under the overloay/dev folder. The command will read the kustomization.yaml file under this folder then apply the otehr kustomizations in cascade for the referenced resource folders.
+## `iac/` — Infrastructure as Code
 
-5. **Continous Integration / Continous Delivery**
+**Purpose:** this folder holds the IaC templates and automation used to provision the Azure resources required by the platform (AKS cluster, Azure Container Registry, networking, RBAC roles, and other platform-level resources).
 
-I didn't include a CI/CD pipeline for the moment (Since I needed to explore kubernetes as part of this repo rather than github actions).
+**What to expect in this folder:**
+- The root README and repository overview mention `iac/` holds Terraform / ARM templates for AKS provisioning, network, security and RBAC setup, plus Azure resource definitions. These templates are the source of truth for creating the CI/CD environment and the ACR used by the cluster. 
+- The repo`s approach favors automated provisioning so the cluster and registry can be created from source-controlled files, enabling reproducible lab environments.
 
-In order to integrate with the kubernetes cluster, I push docker images into a docker registry that is created via the iac sub-project.
+**How to use:**
+1. Install prerequisites (terraform / az cli / azure credentials).
+2. Change directory into `iac/` and follow any environment-specific variables or `README` inside `iac/` (if present).
+3. Run the standard Terraform flow (`terraform init`, `terraform plan`, `terraform apply`) or the equivalent ARM/az CLI flows described in the folder.
 
-In order to push and update the docker images, please configure you local docker client (I personally use podman as a replacement of docker which is a bit hard to configure on my windows machine).
-You will to use two commands:
+**Notes about ACR & AKS attachment:**
+The repository uses (for demo) a permissive ACR access approach: the README documents that ACR was left public to avoid needing premium private endpoints. The recommended production approach is to use private endpoints or managed identity + role assignments. A sample `az aks --attach-acr` command is documented in the repo to attach ACR to the AKS cluster.
 
-- Place you command line prompt under the DockerFile folder location and run ```docker build -t <registry-url>/<image-name>:vx.x .``` in order to create an image taged with version x.x.
-- When you package is ready to deploy, push it in the created registry as part of terraform using ```docker push <registry-url>/<image-name>:vx.x```.
+---
 
-## Running solution locally
+## `k8s/` — Kubernetes manifests & AKS deployment
 
-- Place command line under backend API src folder then run ```dotnet run```. Once backend is ran, in another command line, run ```npm run dev``` which will automatically point to the local backend's address. Please verify correct backend url in frontend's yaml configuration file.
+**Purpose:** store Kustomize overlays, Kubernetes manifests, Ingress/HTTP routes, services, deployments, and any cluster-level manifests (monitoring, logging, argocd application manifests).
 
-## Contributing
+**What to expect in this folder:**
+- Deployments for backend and frontend components.
+- Service and Ingress resources to expose apps.
+- Kustomize overlays (e.g. `overlays/dev`) to wire up environment-specific values.
+- A `gitops` (or similarly named) subfolder containing Argo CD `Application` manifest(s) to sync the repo with the cluster.
 
-Please follow standard Git practices and ensure all deployments are tested before submitting pull requests.
+**AKS setup notes:**
+- The README's Azure Container Registry attachment guidance is relevant here — attach ACR to AKS with `az aks update --attach-acr <acr>` to allow node pools to pull images. This instruction is placed in the repo README under the AKS notes and is reiterated in this `k8s` section because it is part of cluster setup. 
+- There are also Argo CD instructions (install Argo CD via Helm, then apply the `gitops` application manifest). See the repo README for the referenced gitops application manifest name. 
 
-## License
+---
 
-This project is for training purposes only.
+## `src/` — application source & local dev artifacts
+
+**Purpose:** host the microservices, frontend, API, shared libraries, tests and the `docker-compose` file to run the system locally.
+
+**Compose file:** `src/docker-compose.yml` — this is the canonical local development composition that allows you to run the platform (or a reduced set of services) locally using Docker or Podman.
+
+**Tech stack:**
+- Backend: **ASP.NET Core** (C#)
+- Unit testing: **NUnit**
+- Assertions & helpers: **Shouldly**, **AutoFixture**, **Moq**
+
+**Run locally (recommended short flow):**
+1. Install Docker (or Podman).
+2. From repo root: `cd src` and `docker-compose up --build` (or run specific services with `docker-compose up --build backend`).
+3. Verify services start and use the logs to identify binding ports.
+
+---
+
+## `setup/`
+
+Contains convenience scripts for developers and ops, e.g. PowerShell scripts to install helpful shell aliases.
+
+**Notable file:**
+- `setup/aliases/install-git-pr-alias.ps1` — a setup script that configures a `git pr` alias on Windows PowerShell (or Git Bash depending on usage). This alias is installed by the setup helper and simplifies creating and managing GitHub pull requests from the command line. Make sure developers run the install script during onboarding if they want the `git pr` convenience alias. 
+
+---
+
+# Running solution locally (updated)
+
+**Canonical local start:** use the `docker-compose.yml` under `src/` (not the old `dotnet run` + `npm run` description that appears elsewhere). The compose file is the maintained local orchestration and will start the backend and frontend containers in a consistent way for development. See: `src/docker-compose.yml`: https://github.com/WellArchitectedLabs/WellArchitectedLab.MonoRepo/tree/develop/src/docker-compose.yml
+
+---
+
+# Developer & DevOps notes (CI, PRs, Git aliases)
+
+- All GitHub Actions workflows are in `/.github/workflows/` — review them to understand CI jobs, test runs, and publishing behavior. 
+- PR templates live in `/.github/PULL_REQUEST_TEMPLATE/` to standardize contribution information. 
+- The repo ships a setup script to configure a `git pr` alias for streamlined PR operations: `setup/aliases/install-git-pr-alias.ps1`. Run that when onboarding. 
+
+---
+
+# Contributing
+
+Please follow these minimal rules:
+1. Use feature branches (`feature/<short-desc>`).
+2. Run unit tests locally and ensure they pass.
+3. Update documentation and READMEs for changes that affect usage or setup.
+4. Use the PR template from `.github/PULL_REQUEST_TEMPLATE/` to create high-quality PRs.
+
+---
+
+# License
+
+This project is provided for training/demonstration purposes.
+
+---
