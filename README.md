@@ -35,7 +35,11 @@ Key intentions:
 
 # Technical architecture
 
-
+- The following diagram models the intended technical architecture.
+- All workloads are hosted in Azure Kubernetes Services.
+- Manifests are added in k8s folder in this same repo and are watched by ArgoCd for instant sync.
+- AKS exposes the workloads using a frontend and a backend Gateway API + Http Routes.
+- Images are built by specific CI tools that integrate with github actions, under .github/workflows folder.
 
 ```mermaid
 %% AKS / k8s resource relationship diagram
@@ -52,7 +56,7 @@ flowchart TB
 
     %% CI Pipeline
     CI["CI Pipeline: Build, Test, Versioning"]:::ci
-    Image["Container Image: versioned & pushed"]:::acr
+    Image["Container Image: Versionned using GitVersion & pushed"]:::acr
     CI -->|Builds + Versions Image| Image
 
     %% Container Registry
@@ -60,7 +64,7 @@ flowchart TB
     Image --> ACR
 
     %% GitOps / ArgoCD
-    GitRepo["MonoRepo / k8s manifests"]:::gitops
+    GitRepo["k8s folder under repository root"]:::gitops
     Argo["ArgoCD: GitOps Controller"]:::gitops
     GitRepo -->|Watches Git| Argo
     Argo -->|Syncs manifests into Cluster| AKS
@@ -136,7 +140,10 @@ All these pipeliens are triggered by pull requests that target develop and main 
 ### Contrinous Integration workflows:
 
 - weather-forecast-api_ci.yml: Packages and pushes weather forecast API image into ACR registry. Calls wf api docker file.
-- weather-forecast-frontend_ci: Runs a CI for weather forecast frontend on develop / main push. Calls wf frontend docker file.
+- weather-forecast-frontend_ci.yml: Runs a CI for weather forecast frontend on develop / main push. Calls wf frontend docker file.
+
+Both CI pipelines use GitVersion in order to correctly version the pushed images.
+A GitVersion.yml file is added under every microservice folder.
 
 ### Reusable workflows:
 
