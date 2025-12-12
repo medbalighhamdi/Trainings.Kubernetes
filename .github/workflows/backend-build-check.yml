@@ -24,4 +24,34 @@ jobs:
         ACR_PASSWORD : ${{ secrets.ACR_PASSWORD }}
         ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
 
+    # Run unit tests
+  run-UnitTests:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
+          with:
+          # shallow copy
+            fetch-depth: 1
+
+        - name: Restore Backend dependencies
+          run: |
+            dotnet restore src/weather-forecast-api/Tests/WeatherForecast.Tests.csproj
+          
+        - name: Run unit tests
+          working-directory: src/weather-forecast-api/Tests
+          run: |
+                 dotnet test \
+                    --configuration Release \
+                    --logger "trx;LogFileName=backend-tests.trx" \
+                    --collect:"XPlat Code Coverage" \
+                    /p:CollectCoverage=true \
+                    /p:CoverletOutputFormat=cobertura \
+                    /p:CoverletOutput=TestResults/Coverage/
+
+        - name: Upload backend test results
+          uses: actions/upload-artifact@v4
+          with:
+            name: backend-test-results
+            path: src/weather-forecast-api/TestResults
     
