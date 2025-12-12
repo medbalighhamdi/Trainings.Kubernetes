@@ -6,6 +6,9 @@ on:
       test_project_folder:
         type: string
         required: true
+    secrets:
+      codecov_token:
+        required: true
 
 jobs:
     calculate-coverage:
@@ -49,5 +52,5 @@ jobs:
             directory: ${{ inputs.test_project_folder }}/TestResults
             files: coverage.cobertura.xml
             flags: backend
-            token: ${{ secrets.CODECOV_TOKEN }}
+            token: ${{ secrets.codecov_token }}
             verbose: true

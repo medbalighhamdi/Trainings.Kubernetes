@@ -33,3 +33,5 @@ jobs:
       name: Backend Status Check - Tests & Coverage
       with:
         test_project_folder: src/weather-forecast-api/Tests
+      secrets:
+        codecov_token: ${{ secrets.CODECOV_TOKEN }}
