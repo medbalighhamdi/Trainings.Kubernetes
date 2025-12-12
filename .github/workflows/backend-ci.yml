@@ -14,7 +14,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    
+
     # Try to package docker image
     Backend-buildAndPush:
         uses: ./.github/workflows/ci-template.yml
@@ -32,9 +32,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
               - name: Restore Backend dependencies
-                working-directory: src/weather-forecast-api/Tests
-                run: | 
-                    dotnet restore
+                run: |
+                    dotnet restore src/weather-forecast-api/Tests/WeatherForecast.Tests.csproj
           
               - name: Run unit tests
                 working-directory: src/weather-forecast-api/Tests
