@@ -33,6 +33,66 @@ Key intentions:
 
 ---
 
+# Technical architecture
+
+
+
+```mermaid
+%% AKS / k8s resource relationship diagram
+%% Paste this block in a GitHub Markdown file — GitHub supports Mermaid.
+flowchart TB
+    %% Style Definitions (darker, high contrast)
+    classDef infra fill:#2a4b8d,stroke:#1e325c,color:#ffffff;
+    classDef acr fill:#1b5e20,stroke:#0d3b12,color:#ffffff;
+    classDef ci fill:#4e342e,stroke:#3e2723,color:#ffffff;
+    classDef gitops fill:#004d40,stroke:#00332b,color:#ffffff;
+    classDef app fill:#6a1b9a,stroke:#4a136c,color:#ffffff;
+    classDef net fill:#b71c1c,stroke:#7f1313,color:#ffffff;
+    classDef external fill:#263238,stroke:#000000,color:#ffffff;
+
+    %% CI Pipeline
+    CI["CI Pipeline: Build, Test, Versioning"]:::ci
+    Image["Container Image: versioned & pushed"]:::acr
+    CI -->|Builds + Versions Image| Image
+
+    %% Container Registry
+    ACR["Azure Container Registry (ACR)"]:::acr
+    Image --> ACR
+
+    %% GitOps / ArgoCD
+    GitRepo["MonoRepo / k8s manifests"]:::gitops
+    Argo["ArgoCD: GitOps Controller"]:::gitops
+    GitRepo -->|Watches Git| Argo
+    Argo -->|Syncs manifests into Cluster| AKS
+
+    %% AKS Cluster
+    AKS["AKS Cluster"]:::infra
+
+    subgraph Workloads["Workloads in AKS"]
+        Deploy1["Deployments"]:::app
+        Pods["Pods"]:::app
+        SVC["Services"]:::app
+        HTTPRoute["HTTPRoute"]:::net
+        Gateway["Gateway API (Http Listeners)"]:::net
+    end
+
+    AKS --> Deploy1
+    Deploy1 -->|Creates| Pods
+    Pods --> SVC
+    SVC --> HTTPRoute
+    HTTPRoute --> Gateway
+
+    %% Image flow
+    ACR -->|Pulls Images| Deploy1
+
+    %% ArgoCD applies YAMLs
+    Argo -->|Applies YAMLs for deployments, services, httpRoutes, gateway, ingress| Workloads
+
+    %% Internet access
+    Internet(("Internet")):::external
+    Internet -->|HTTP/HTTPS traffic| Gateway
+```
+
 # Repository layout
 
 ## `.github/`
