@@ -2,7 +2,7 @@ using WeatherForecast.Domain.Ports.Config;
 
 namespace WeatherForecast.Api.Extensions;
 
-public static class WebApplicationwebApplicationBuilderExtenions
+public static class WebApplicationBuilderExtensions
 {
     public static void SetupConfiguration(this WebApplicationBuilder webApplicationBuilder)
     {
