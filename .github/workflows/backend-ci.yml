@@ -31,6 +31,12 @@ jobs:
     run-UnitTests:
         runs-on: ubuntu-latest
         steps:
+              - name: Checkout repo
+                uses: actions/checkout@v4
+                with:
+                  # shallow copy
+                  fetch-depth: 1
+
               - name: Restore Backend dependencies
                 run: |
                     dotnet restore src/weather-forecast-api/Tests/WeatherForecast.Tests.csproj
