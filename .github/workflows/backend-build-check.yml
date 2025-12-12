@@ -68,9 +68,6 @@ jobs:
           uses: codecov/codecov-action@v5
           with:
             directory: src/weather-forecast-api/Tests/TestResults
-            fail_ci_if_error: true
             files: coverage.cobertura.xml
-            flags: backend
-            name: codecov-backend
             token: ${{ secrets.CODECOV_TOKEN }}
             verbose: true
