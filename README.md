@@ -12,7 +12,7 @@
 - Repository layout
   - `.github/` (github actions workflows & PR templates)
   - `iac/` (Infrastructure as Code with Teraform)
-  - `k8s/` (Kubernetes manifests & AKS setup)
+  - `k8s/` (Kubernetes manifests, overlays & AKS setup)
   - `src/` (application source, tests, docker-compose)
   - `setup/` (repository setup and dev experience scripts)
 - Running the solution locally
@@ -217,7 +217,7 @@ ACR was left public to avoid needing premium private endpoints. The recommended 
 
 ---
 
-## `k8s/` — Kubernetes manifests & AKS deployment
+## `k8s/` — Kubernetes manifests, overlay & AKS deployment
 
 **Purpose:** store Kustomize overlays, Kubernetes manifests, Gateway Apis/HTTP routes, services, deployments, pod disruption budgets, config maps and any cluster-level manifests, as well as monitoring resources, logging and argocd application manifests.
 
@@ -226,6 +226,7 @@ ACR was left public to avoid needing premium private endpoints. The recommended 
 - Service and Gateway Apis / Http Routes (Ex. Ingress) resources to expose apps.
 - Kustomize overlays (e.g. `overlays/dev`) to wire up environment-specific values.
 - A `gitops` subfolder containing Argo CD `Application` manifest(s) to sync the repo with the cluster. Deployments are automated via ArgoCD making ArgoCD the source of truth of environment syncing and the official tools for release management.
+- kubernetes resources are mapped to different environments using kubernetes Kustomization files that are placed under folders as indicators of the applied resources as per requested environment.
 
 **AKS setup notes:**
 - Attach ACR to AKS with `az aks update --attach-acr <acr>` to allow node pools to pull images. This instruction is placed in the repo README under the AKS notes and is reiterated in this `k8s` section because it is part of cluster setup. 
