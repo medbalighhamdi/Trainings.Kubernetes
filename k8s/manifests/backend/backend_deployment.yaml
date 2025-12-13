@@ -83,6 +83,6 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 10
         volumes:
-          - name: config
-            configMap:
-            - name: backend-configmap
+        - name: config
+          configMap:
+            name: backend-configmap
