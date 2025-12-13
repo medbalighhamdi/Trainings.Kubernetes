@@ -48,6 +48,10 @@ spec:
       - name: backend-webapp
         # test image from docker registry, provided by nginx project
         image: acrdevzlj7yj.azurecr.io/weather-forecast-api:latest
+        volumeMounts:
+          - name:  config
+            mountPath: /app/appsettings.json
+            subPath: appsettings.json
         ports: 
         - containerPort: 80
         imagePullPolicy: Always  # Always pull latest
@@ -78,3 +82,7 @@ spec:
             port: 80
           initialDelaySeconds: 30
           timeoutSeconds: 10
+        volumes:
+          - name: config
+            configMap:
+            - name: backend-configmap

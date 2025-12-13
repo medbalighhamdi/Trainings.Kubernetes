@@ -6,6 +6,7 @@ resources:
   - ../../manifests/frontend
   - ../../manifests/shared
   - ../../manifests/database
+  - backend_config-map.yml
 
 namePrefix: dev-
 nameSuffix: ""
