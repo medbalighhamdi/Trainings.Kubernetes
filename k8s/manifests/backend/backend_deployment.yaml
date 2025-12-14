@@ -50,7 +50,7 @@ spec:
         image: acrdevzlj7yj.azurecr.io/weather-forecast-api:latest
         volumeMounts:
           - name:  config
-            mountPath: appsettings.json
+            mountPath: /appsettings.json
             subPath: appsettings.json
         command:
           - /app/wait-for.sh
