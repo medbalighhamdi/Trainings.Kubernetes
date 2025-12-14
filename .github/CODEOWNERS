@@ -4,11 +4,11 @@
 # GitHub will request these users/teams for review automatically
 
 # All backend repo files require weather forecast backend team
-src/weather-forecast-api/**       @WellArchitectedLabs/wf-backend-team
+src/weather-forecast-api/**       wf-backend-team
 
 # All frontend repo files require weather forecast frontend team
-src/weather-forecast-frontend/**     @WellArchitectedLabs/wf-frontend-team
+src/weather-forecast-frontend/**     wf-frontend-team
 
 # Kubernetes and IAC files require DevOps team
-k8s/**  @WellArchitectedLabs/devops-team
-iac/**  @WellArchitectedLabs/devops-team
+k8s/**  devops-team
+iac/**  devops-team

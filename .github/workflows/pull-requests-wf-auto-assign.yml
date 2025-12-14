@@ -1,0 +1,87 @@
+name: Status Check - Auto Assign Teams
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  assign-reviewers:
+    name: Auto Assign Teams Check   # ✅ Status check name
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign teams
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = await github.paginate(
+              github.rest.pulls.listFiles, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                per_page: 100
+              }
+            );
+
+            const teams = [];
+
+            // I - Wf-team auto-assignment
+            const wfTouched = files.some(file =>
+              file.filename.startsWith("src/weather-forecast-api/") ||
+              file.filename.startsWith("src/weather-forecast-frontend/")
+            );
+            if (wfTouched) teams.push("wf-dev-team");
+
+            // II - Wf-devops team auto-assignment
+            const devOpsTouched = files.some(file =>
+              file.filename.startsWith("k8s") ||
+              file.filename.startsWith("iac") ||
+              file.filename.startsWith(".github")
+            );
+            if (devOpsTouched) teams.push("devops-team");
+
+            // Deduplicate team slugs
+            const uniqueTeams = [...new Set(teams)];
+            const org = context.repo.owner;
+            const validTeams = [];
+
+            for (const slug of uniqueTeams) {
+              try {
+                await github.request('GET /orgs/{org}/teams/{team_slug}', {
+                  org,
+                  team_slug: slug
+                });
+                validTeams.push(slug);
+              } catch (err) {
+                if (err.status === 404) {
+                  console.log(`Team not found: ${slug} — skipping.`);
+                } else {
+                  console.log(`Error checking team ${slug}: ${err.message}`);
+                }
+              }
+            }
+
+             if (validTeams.length === 0) {
+              console.log("No valid team reviewers found — skipping team request.");
+            } else {
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.payload.pull_request.number,
+                  team_reviewers: validTeams
+                });
+                console.log("✅ Team assignment completed successfully:", validTeams);
+              } catch (err) {
+                console.log("Failed to request team reviewers:", err.message);
+                console.log(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+                throw err;
+              }
+            }
+
+      - name: Mark workflow as successful
+        run: echo "✅ Auto Assign Teams complete"

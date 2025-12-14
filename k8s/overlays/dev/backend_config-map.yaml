@@ -12,10 +12,9 @@ data:
       }
     },
     "AllowedHosts": "*"
-    {
-      "Redis":
-      {
-        "Write": "redis-primary.default.svc.cluster.local:6379"
-        "Read": "redis-secondary.default.svc.cluster.local:6379"
-      } 
+    "WeatherForecast":{
+      "Redis": {
+          "WriteDbConnection": "redis-primary.default.svc.cluster.local:6379"
+          "ReadDbConnection": "redis-secondary.default.svc.cluster.local:6379"
+        }
     }
