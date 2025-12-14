@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: backend-configmap
 data:
-  appSettings.json: |
+  appsettings.json: |
     # json fieldPath:
     "Logging": {
     "LogLevel": {
