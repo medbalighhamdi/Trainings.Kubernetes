@@ -27,13 +27,13 @@
 This mono-repo demonstrates a production-minded, full-stack microservices reference platform. It was assembled to teach and prove the complete delivery lifecycle: local development, automated testing, containerization, infrastructure provisioning (IaC), Kubernetes cluster management (AKS), CI using GitHub Actions, and continuous delivery using GitOps (Argo CD). The repo is intentionally opinionated.
 
 Key intentions:
-- Keep a single repository containing all artifacts needed to build, test, package and deploy a sample weather forecast app.
+- Keep a single repository containing all technologies needed to build, test, package and deploy a sample weather forecast app.
 - Provide IaC templates so the platform can be provisioned in Azure (AKS, ACR, networking, RGs, etc.).
-- Illustrate GitHub Actions-based CI and GitOps with Argo CD for delivery.
+- Illustrate a modern GitHub Actions-based CI and GitOps with Argo CD for delivery.
 - Implement an enterprise grade shitft-left workflows for securely packaging, testing and deploying docker images into AKS clusters.
 
 ---
-# Technical Architecture
+# Technical architecture
 
 The following diagram models the intended technical architecture.
 
@@ -156,7 +156,7 @@ As for an enterprise scale platform, the pull request validation validation is g
 
 Status check workflow files are prefixed by pull-request:
 - `pull-requests_checklist-enforcer.yml`: Enforces pull creator clicked on all PR template checkboxes.
-- `pull-requests-wf-auto-assign.yml`: Auto assigns responsable teams to PRs based on the modified code. Very useful for mono repo setups. Teams are added on github organization level. In our case a parent team named wf-team was added with two child teams: wf-backend-- team and wf-frontend-team. A deveops-team is also created in the same hierarchy as wf-team.
+- `pull-requests-wf-auto-assign.yml`: Auto assigns responsable teams to PRs based on the modified code. Very useful for mono repo setups. Teams are added on github organization level. In our case a parent team named wf-team is added with two child teams: wf-backend-team and wf-frontend-team. A deveops-team is also created in the same hierarchy as wf-team.
 - `pull-requests_wf-codeql-analysis.yml`: Runs CodeQL, github's security check tool.
 - `pull-requests_wf-auto-label.yml`: Add label to pull requests based on the changed file. Typically the weather forecast api pull requests will be labeled as backend and weather-forecast. Labels are very useful for PR grouping and filtering.
 - `pull-request_weather-forecast-api-status-check.yml`: Runs a dry-run for weather forecast backend API CI workflow are is later launched on develop / main pushes.
@@ -215,7 +215,7 @@ ACR was left public to avoid needing premium private endpoints. The recommended 
 
 ## `k8s/` — Kubernetes manifests & AKS deployment
 
-**Purpose:** store Kustomize overlays, Kubernetes manifests, Ingress/HTTP routes, services, deployments, and any cluster-level manifests (monitoring, logging and argocd application manifests).
+**Purpose:** store Kustomize overlays, Kubernetes manifests, Gateway Apis/HTTP routes, services, deployments, and any cluster-level manifests (monitoring, logging and argocd application manifests).
 
 **What to expect in this folder:**
 
@@ -242,8 +242,7 @@ ACR was left public to avoid needing premium private endpoints. The recommended 
 
 - A complete, yet simple, frontend to backend application, named weather forecast.
 - A demonstration of an hexagonal architecture.
-
-**Compose file:** `src/docker-compose.yml` — this is the canonical local development composition that allows you to run the platform (or a reduced set of services) locally using Docker or Podman.
+- Compose file: `src/docker-compose.yml` — this is the canonical local development composition that allows you to run the platform (or a reduced set of services) locally using Docker or Podman.
 
 **Tech stack:**
 
@@ -268,7 +267,7 @@ Contains convenience scripts for developers and ops, e.g. PowerShell scripts to 
 
 ---
 
-# Running solution locally (updated)
+# Running solution locally
 
 **Canonical local start:**  use the `docker-compose.yml` under `src/`. The compose file is the maintained local orchestration and will start the backend and frontend containers in a consistent way for development - See: src/docker-compose.yml: https://github.com/WellArchitectedLabs/WellArchitectedLab.MonoRepo/tree/develop/src/docker-compose.yml.
 
@@ -290,7 +289,7 @@ Yet there are some rules to follow:
 1. Use feature branches (`feature/<short-desc>`).
 2. Run unit tests locally and ensure they pass.
 3. Update documentation and READMEs for changes that affect usage or setup.
-4. Use the PR template from `.github/PULL_REQUEST_TEMPLATE/` to create high-quality PRs.
+4. Create high-quality PRs just by using the developed `git pr` alias, which ensures the usage of templates under `.github/PULL_REQUEST_TEMPLATE/` folder.
 
 ---
 
