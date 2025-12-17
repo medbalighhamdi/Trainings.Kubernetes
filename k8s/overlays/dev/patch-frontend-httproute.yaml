@@ -1,0 +1,11 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: frontend-httproute
+spec:
+  rules:
+    - backendRefs:
+        # The patch method is the only available method for HTTPRoute resources which are new to kubernetes and do not support
+        # Both Vars (which are standard kubernetes primitives) and kustomizeconfig file based replacement
+        - name: dev-frontend-service   # prefixed Service name for dev overlay
+          port: 80

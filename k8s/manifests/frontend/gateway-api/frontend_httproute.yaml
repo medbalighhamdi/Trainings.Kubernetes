@@ -16,6 +16,6 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: $(FRONTEND_SERVICE)
+        - name: frontend-service
           port: 80
           namespace: default
