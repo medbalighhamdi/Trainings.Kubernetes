@@ -23,6 +23,6 @@ patches:
       group: gateway.networking.k8s.io
       version: v1
       kind: HTTPRoute
-      name: frontend-httproute
+      name: backend-httproute
       namespace: nginx-gateway          # ✅ specify actual namespace
     path: patches/patch-backend-httproute.yaml

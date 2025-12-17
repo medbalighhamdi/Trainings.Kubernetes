@@ -8,5 +8,5 @@ spec:
         # The patch method is the only available method for HTTPRoute resources which are new to kubernetes and do not support
         # Both Vars (which are standard kubernetes primitives) and kustomizeconfig file based replacement
         - name: dev-backend-service   # prefixed Service name for dev overlay
-          port: 80
+          port: 8080
           namespace: default
