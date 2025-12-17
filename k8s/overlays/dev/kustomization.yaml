@@ -11,5 +11,11 @@ resources:
 namePrefix: dev-
 nameSuffix: ""
 
-patchesStrategicMerge: 
-  - patch-frontend-httproute.yaml
+patches:
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: frontend-httproute
+      namespace: nginx-gateway          # ✅ specify actual namespace
+    path: patch-frontend-httproute.yaml
