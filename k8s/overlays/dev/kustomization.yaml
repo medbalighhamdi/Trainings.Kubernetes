@@ -10,3 +10,6 @@ resources:
 
 namePrefix: dev-
 nameSuffix: ""
+
+configurations:
+  - ../kustomizeconfig.yaml
