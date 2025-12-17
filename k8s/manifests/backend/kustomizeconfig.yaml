@@ -1,5 +1,8 @@
+# Binds http route gateway api ref to the gateway api name
+# This is important since gateway api name was altered by kustomization process
+# However, this technique does not work for HTTPRoute => Service references
+# In order to correct this mapping, the only way we found is applying merge patches. Please check overlay/dev/kustomization.yaml file (patches section) 
 nameReference:
-  # HTTPRoute → Gateway (already good)
   - kind: Gateway
     group: gateway.networking.k8s.io
     version: v1

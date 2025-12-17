@@ -9,6 +9,3 @@ resources:
   - redis/redis_write-service.yaml
   - redis/redis_read-service.yaml
   - redis/redis_headless-service.yaml
-
-configurations:
-  - kustomizeconfig.yaml

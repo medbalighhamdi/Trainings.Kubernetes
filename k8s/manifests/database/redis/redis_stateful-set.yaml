@@ -33,7 +33,7 @@ spec:
           - |
             # If this is redis-0 → start as primary
             if [[ "$POD_NAME" == "redis-0" ]]; then
-              exec redis-server --appendonly yes
+              exec redis-server --appendonly no
             
             # For all other pods → start as replicas
             else
