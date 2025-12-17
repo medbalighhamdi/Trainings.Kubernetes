@@ -31,8 +31,8 @@ spec:
           - /bin/sh
           - -c
           - |
-            if [ "$POD_NAME" = "redis-0" ]; then
-              exec redis-server --appendonly no
+            if [ "$POD_NAME" = "dev-redis-0" ]; then
+              exec redis-server --appendonly no --replicaof no one
             else
               exec redis-server --appendonly yes --replicaof redis-0.redis 6379
             fi
