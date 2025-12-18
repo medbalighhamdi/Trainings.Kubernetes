@@ -29,7 +29,7 @@ spec:
               fieldPath: metadata.name
         envFrom:
           - configMapRef:
-              name: redisConfigEnvs
+              name: redisconfigenvs
         command:
           - /bin/sh
           - -c
