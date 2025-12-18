@@ -11,9 +11,9 @@ resources:
 namePrefix: dev-
 nameSuffix: ""
 
-# adds a metadata.label for every resource created by this kustomize hop
-commonLabels:
-  environment: dev
+# # # adds a metadata.label for every resource created by this kustomize hop
+# commonLabels:
+#   environment: dev
 
 # we need to track the environment in order to use it on pod level
 # config map generators are used here in order to update the pods as the config changes
@@ -23,6 +23,7 @@ configMapGenerator:
     literals:
       # used by redis in order to configure the replication mecanism
       - REDIS_HEADLESS_SERVICE=redis
+      - ENV_NAME=dev
     options:
       disableNameSuffixHash: true
 

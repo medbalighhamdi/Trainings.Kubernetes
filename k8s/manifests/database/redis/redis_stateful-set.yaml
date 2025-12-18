@@ -27,10 +27,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        - name: ENV_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['environment']
         envFrom:
           - configMapRef:
               name: redisConfigEnvs
