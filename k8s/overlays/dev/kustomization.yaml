@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# reference all manifests from base folder
 resources:
   - ../../manifests/backend
   - ../../manifests/frontend
@@ -8,10 +9,13 @@ resources:
   - ../../manifests/database
   - backend_config-map.yaml
 
+# define a dev prefix for all created environment in relation to this overlay
 namePrefix: dev-
+# no suffix is defined
 nameSuffix: ""
 
 # adds a metadata.label for every resource created by this kustomize hop
+# this allows easy resource managemnt using -l filters
 commonLabels:
   environment: dev
 
@@ -23,9 +27,13 @@ configMapGenerator:
     literals:
       # used by redis in order to configure the replication mecanism
       - REDIS_HEADLESS_SERVICE=dev-redis
+    # this is necessary in order to avoid non conventional resource name with naming RFCs
     options:
       disableNameSuffixHash: true
 
+# section for applying all patches
+# patches are applied in this particular case since HTTPRoute and Gateway API resources are a bit trailing (at least at the moment of the implementation)
+# in termsof kustomization management. These resources relatively new compared to ingress and do not fully manage prefix propagation to their referenced resources by kubectl -k
 patches:
   - target:
       group: gateway.networking.k8s.io
@@ -33,6 +41,7 @@ patches:
       kind: HTTPRoute
       name: frontend-httproute
       namespace: nginx-gateway
+    # path to frontend http route to service patch file
     path: patches/patch-frontend-httproute.yaml
   - target:
       group: gateway.networking.k8s.io
@@ -40,4 +49,5 @@ patches:
       kind: HTTPRoute
       name: backend-httproute
       namespace: nginx-gateway
+    # path to backend http route to service patch file
     path: patches/patch-backend-httproute.yaml
