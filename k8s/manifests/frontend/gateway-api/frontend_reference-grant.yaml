@@ -9,8 +9,8 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 # typically it is v1beta for ReferenceGrants
 kind: ReferenceGrant
 metadata:
-  name: nginx-class-to-backend-grant
-  namespace: backend #needs to be the service namespace
+  name: nginx-class-to-frontend-grant
+  namespace: frontend #needs to be the service namespace
 spec:
   from: 
   - group: gateway.networking.k8s.io

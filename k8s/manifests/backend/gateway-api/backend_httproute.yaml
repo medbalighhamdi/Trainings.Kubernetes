@@ -19,4 +19,4 @@ spec:
       backendRefs:
         - name: backend-service
           port: 8080
-          namespace: default
+          namespace: backend

@@ -3,6 +3,7 @@ kind: Deployment
 #descriptions arounf the deployment
 metadata:
   name: frontend-webapp
+  namespace: frontend
 spec:
   selector:
     matchLabels:
