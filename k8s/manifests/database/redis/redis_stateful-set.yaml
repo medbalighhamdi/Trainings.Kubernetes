@@ -31,7 +31,6 @@ spec:
         envFrom:
           - configMapRef:
               name: redisconfigenvvars
-              namespace: default
         command:
           - /bin/sh
           - -c
