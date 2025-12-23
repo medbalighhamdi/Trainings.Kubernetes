@@ -1,4 +1,15 @@
+global:
+  proxy:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+        
 pilot:
+  replicaCount: 1
   nodeSelector:
     workload: operations
   tolerations:
