@@ -41,7 +41,7 @@ patches:
       version: v1
       kind: HTTPRoute
       name: frontend-httproute
-      namespace: nginx-gateway
+      namespace: istio-gateway
     # path to frontend http route to service patch file
     path: patches/patch-frontend-httproute.yaml
   - target:
@@ -49,6 +49,6 @@ patches:
       version: v1
       kind: HTTPRoute
       name: backend-httproute
-      namespace: nginx-gateway
+      namespace: istio-gateway
     # path to backend http route to service patch file
     path: patches/patch-backend-httproute.yaml
