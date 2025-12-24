@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: istiod
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"   # I need deamon to be installed after crds
 spec:
   project: default
   source:
@@ -38,6 +40,14 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
+
+  ignoreDifferences:
+    - group: admissionregistration.k8s.io
+      kind: ValidatingWebhookConfiguration
+      name: istiod-default-validator
+      jsonPointers:
+        - /webhooks/*/clientConfig/caBundle
+        
   syncPolicy:
     automated:
       prune: true

@@ -7,8 +7,8 @@ metadata:
 resources:
   - namespace/backend_namespace.yaml
   - frontend_deployment.yaml
-  - auto-scaling/frontend_hpa.yaml
-  - auto-scaling/frontend_pod-disruption-budget.yaml
+  - high-availability/frontend_hpa.yaml
+  - high-availability/frontend_pod-disruption-budget.yaml
   - gateway-api/frontend_gateway-api.yaml
   - gateway-api/frontend_httproute.yaml
   - gateway-api/frontend_service.yaml

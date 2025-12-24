@@ -1,0 +1,23 @@
+# Only installs istio crds.
+# Crds are like the SDK or the API that are necessary for dependent applications (kiali in this instance)
+# Istiod is the deamon running istio. It is the controller doing the istio business.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-base
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"   # I need crds to exist before deamon
+spec:
+  project: default
+  source:
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: base
+    targetRevision: 1.22.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated:
+      prune: false   # ⚠️ NEVER prune CRDs
+      selfHeal: true

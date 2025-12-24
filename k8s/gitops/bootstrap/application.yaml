@@ -15,10 +15,10 @@ spec:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
     automated:
       prune: true
       selfHeal: true
-  retry:
-    limit: 2
-    backoff:
-      duration: 5s

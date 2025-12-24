@@ -35,13 +35,13 @@ spec:
             component_status:
               enabled: true
 
-        kiali_feature-flags:
+        kiali_feature_flags:
           istio_injection_action: true
           istio_validation_action: true
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: istio-system
   syncPolicy:
     automated:
       prune: true
