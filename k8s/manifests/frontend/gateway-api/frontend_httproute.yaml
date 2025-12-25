@@ -19,5 +19,6 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: frontend-service.frontend.svc.cluster.local
+        - name: frontend-service
           port: 80
+          namespace: frontend
