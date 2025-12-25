@@ -7,6 +7,5 @@ spec:
     - backendRefs:
         # The patch method is the only available method for HTTPRoute resources which are new to kubernetes and do not support
         # Both Vars (which are standard kubernetes primitives) and kustomizeconfig file based replacement
-        - name: dev-frontend-service   # prefixed Service name for dev overlay
+        - name: dev-frontend-service.frontend.svc.cluster.local   # prefixed Service name for dev overlay
           port: 80
-          namespace: frontend

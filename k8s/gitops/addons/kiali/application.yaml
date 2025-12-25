@@ -21,9 +21,11 @@ spec:
               operator: "Equal"
               value: "operations"
               effect: "NoSchedule"
-        
+
         auth:
           strategy: anonymous
+          anonymous:
+            enabled: true
 
         external_services:
           prometheus:
@@ -34,6 +36,22 @@ spec:
             root_namespace: istio-system
             component_status:
               enabled: true
+            # Tell kiali tgat istio is installed as a gateway api (new way) and not as an ingress controller (traditional way)
+            gateway_api_enabled: true
+
+        health_config:
+          # Disable side car check for these namespaces (optional for clean kiali interface)
+          # Kiali checks istio proxy sidecar injection for all namespaces by default
+          namespace:
+            - name: istio-system
+              health:
+                sidecar: false
+            - name: istio-gateway
+              health:
+                sidecar: false
+            - name: monitoring
+              health:
+                sidecar: false
 
         kiali_feature_flags:
           istio_injection_action: true

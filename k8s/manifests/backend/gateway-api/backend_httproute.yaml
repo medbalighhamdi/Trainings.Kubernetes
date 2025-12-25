@@ -20,6 +20,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: backend-service
+        - name: backend-service.backend.svc.cluster.local
           port: 8080
-          namespace: backend
