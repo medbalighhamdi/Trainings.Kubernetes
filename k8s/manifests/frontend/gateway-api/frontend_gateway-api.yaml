@@ -11,6 +11,11 @@ metadata:
     service.istio.io/externalTrafficPolicy: Local
 spec:
   gatewayClassName: istio
+
+  infrastructure:
+    annotations:
+      service.istio.io/externalTrafficPolicy: Local
+
   listeners:
     - name: http
       protocol: HTTP
